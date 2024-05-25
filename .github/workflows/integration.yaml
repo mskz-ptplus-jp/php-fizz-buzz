@@ -19,10 +19,12 @@ jobs:
           npm install
           npx playwright install
           docker compose up -d
+      - name: Get APP Container ID
+        id: get-app-container-id
+        run: echo "APP_CONTAINER_ID=$(docker ps --filter 'name=app' -q)" >> $GITHUB_ENV
       - name: Copy repository contents to container
         run: |
-          APP_CONTAINER_ID=$(docker ps --filter "name=app" -q)
-          docker cp . $APP_CONTAINER_ID:/var/www/html
+          docker cp . ${APP_CONTAINER_ID}:/var/www/html
       - name: Install Composer dependencies
         run: |
           APP_CONTAINER_ID=$(docker ps --filter "name=app" -q)
