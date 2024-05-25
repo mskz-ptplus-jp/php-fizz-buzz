@@ -19,7 +19,10 @@ jobs:
           npm install
           npx playwright install
           docker compose up -d
-          npm run composer install
+      - name: Install Composer dependencies
+        run: |
+          CONTAINER_ID=$(docker ps --filter "name=app" -q)
+          docker exec -w /var/www/html $CONTAINER_ID composer install
       - name: Run Static Test
         run: npm run test:static
       - name: Run Unit Test
