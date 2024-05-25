@@ -35,8 +35,6 @@ git config --local user.email <Your email>
 git config --local user.name "<Your name>"
 ```
 
-merge is --no-ff
-
 ```
 git config --add merge.ff false
 git config --add pull.ff only
