@@ -11,7 +11,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Pull compose.yaml from another repository
         run: |
-          git clone git@github.com:mskz-ptplus-jp/docker-php83.git
+          git clone https://github.com/mskz-ptplus-jp/docker-php83.git
           cp docker-php83/compose.yaml .        
       - name: Setup
         run: |
