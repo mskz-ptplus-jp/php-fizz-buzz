@@ -9,19 +9,38 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-      - name: Pull compose.yaml from another repository
+      - name: Pull compose.yaml and required directories from another repository
         run: |
-          git clone git@github.com:mskz-ptplus-jp/docker-php83.git
-          cp docker-php83/compose.yaml .        
+          git clone https://github.com/mskz-ptplus-jp/docker-php83.git
+          cp docker-php83/compose.yaml .
+          cp -r docker-php83/docker ./docker
       - name: Setup
         run: |
           npm install
           npx playwright install
           docker compose up -d
-          npm run composer install
+      - name: Copy repository contents to container
+        run: |
+          APP_CONTAINER_ID=$(docker ps --filter "name=app" -q)
+          docker cp . $APP_CONTAINER_ID:/var/www/html
+      - name: Install Composer dependencies
+        run: |
+          APP_CONTAINER_ID=$(docker ps --filter "name=app" -q)
+          docker exec -w /var/www/html $APP_CONTAINER_ID composer install
+      - name: Install Playwright dependencies
+        run: |
+          APP_CONTAINER_ID=$(docker ps --filter "name=app" -q)
+          docker exec -w /var/www/html $APP_CONTAINER_ID npx playwright install
+          docker exec -w /var/www/html $APP_CONTAINER_ID npx playwright install-deps  
       - name: Run Static Test
-        run: npm run test:static
+        run: |
+          APP_CONTAINER_ID=$(docker ps --filter "name=app" -q)
+          docker exec -w /var/www/html $APP_CONTAINER_ID vendor/bin/phpstan analyse
       - name: Run Unit Test
-        run: npm run test:unit
+        run: |
+          APP_CONTAINER_ID=$(docker ps --filter "name=app" -q)
+          docker exec -w /var/www/html $APP_CONTAINER_ID vendor/bin/phpunit
       - name: Run E2E Test
-        run: npm run test:e2e
+        run: |
+          APP_CONTAINER_ID=$(docker ps --filter "name=app" -q)
+          docker exec -w /var/www/html $APP_CONTAINER_ID npx playwright test
