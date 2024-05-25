@@ -12,7 +12,7 @@ jobs:
       - name: Pull compose.yaml from another repository
         run: |
           git clone https://github.com/mskz-ptplus-jp/docker-php83.git
-          cp docker-php83/compose.yaml .        
+          cp -r docker-php83/ .
       - name: Setup
         run: |
           npm install
