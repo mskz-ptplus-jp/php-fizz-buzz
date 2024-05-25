@@ -6,6 +6,16 @@ PHP CI on GitHub Actions
 - phpunit
 - e2e
 
+Branch protection on GitHub. Free plan must be public.
+
+- [Branch protection rules.](https://github.com/mskz-ptplus-jp/php-fizz-buzz/settings/branches)
+- [Add rule]
+  - Branch name pattern: main
+  - [Require a pull request before merging]
+  - [Require status checks to pass before merging]
+    - [Require branches to be up to date before merging]
+        - Status checks that are required.
+            - Integration
 
 ## Docker
 
