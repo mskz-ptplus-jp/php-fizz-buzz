@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-      - name: Pull compose.yaml from another repository
+      - name: Pull compose.yaml and required directories from another repository
         run: |
           git clone https://github.com/mskz-ptplus-jp/docker-php83.git
           cp docker-php83/compose.yaml .
@@ -19,6 +19,10 @@ jobs:
           npm install
           npx playwright install
           docker compose up -d
+      - name: Copy repository contents to container
+        run: |
+          CONTAINER_ID=$(docker ps --filter "name=app" -q)
+          docker cp . $CONTAINER_ID:/var/www/html
       - name: Install Composer dependencies
         run: |
           CONTAINER_ID=$(docker ps --filter "name=app" -q)
