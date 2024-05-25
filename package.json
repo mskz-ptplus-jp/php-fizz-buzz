@@ -6,9 +6,9 @@
         "@types/node": "^20.9.1"
     },
     "scripts": {
-        "composer": "docker exec -w /var/www/html php-fizz-buzz composer",
-        "test:static": "docker exec -w /var/www/html php-fizz-buzz vendor/bin/phpstan analyse",
-        "test:unit": "docker exec -w /var/www/html php-fizz-buzz vendor/bin/phpunit",
+        "composer": "composer",
+        "test:static": "vendor/bin/phpstan analyse",
+        "test:unit": "vendor/bin/phpunit",
         "test:e2e": "npx playwright test"
     },
     "volta": {

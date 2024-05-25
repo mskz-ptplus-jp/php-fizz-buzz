@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-      - name: Pull compose.yaml and required directories from another repository
+      - name: Pull compose.yaml from another repository
         run: |
           git clone https://github.com/mskz-ptplus-jp/docker-php83.git
           cp docker-php83/compose.yaml .
@@ -19,23 +19,10 @@ jobs:
           npm install
           npx playwright install
           docker compose up -d
-      - name: Copy repository contents to container
-        run: |
-          APP_CONTAINER_ID=$(docker ps --filter "name=app" -q)
-          docker cp . $APP_CONTAINER_ID:/var/www/html
-      - name: Install Composer dependencies
-        run: |
-          APP_CONTAINER_ID=$(docker ps --filter "name=app" -q)
-          docker exec -w /var/www/html $APP_CONTAINER_ID composer install
+          npm run composer install
       - name: Run Static Test
-        run: |
-          APP_CONTAINER_ID=$(docker ps --filter "name=app" -q)
-          docker exec -w /var/www/html $APP_CONTAINER_ID vendor/bin/phpstan analyse
+        run: npm run test:static
       - name: Run Unit Test
-        run: |
-          APP_CONTAINER_ID=$(docker ps --filter "name=app" -q)
-          docker exec -w /var/www/html $APP_CONTAINER_ID vendor/bin/phpunit
+        run: npm run test:unit
       - name: Run E2E Test
-        run: |
-          APP_CONTAINER_ID=$(docker ps --filter "name=app" -q)
-          docker exec -w /var/www/html $APP_CONTAINER_ID npx playwright test
+        run: npm run test:e2e
