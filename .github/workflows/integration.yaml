@@ -31,6 +31,7 @@ jobs:
         run: |
           APP_CONTAINER_ID=$(docker ps --filter "name=app" -q)
           docker exec -w /var/www/html $APP_CONTAINER_ID npx playwright install
+          docker exec -w /var/www/html $APP_CONTAINER_ID npx playwright install-deps  
       - name: Run Static Test
         run: |
           APP_CONTAINER_ID=$(docker ps --filter "name=app" -q)
