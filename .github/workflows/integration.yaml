@@ -19,28 +19,25 @@ jobs:
           npm install
           npx playwright install
           docker compose up -d
+      - name: Get APP Container ID
+        id: get-app-container-id
+        run: echo "APP_CONTAINER_ID=$(docker ps --filter 'name=app' -q)" >> $GITHUB_ENV
       - name: Copy repository contents to container
         run: |
-          APP_CONTAINER_ID=$(docker ps --filter "name=app" -q)
-          docker cp . $APP_CONTAINER_ID:/var/www/html
+          docker cp . ${APP_CONTAINER_ID}:/var/www/html
       - name: Install Composer dependencies
         run: |
-          APP_CONTAINER_ID=$(docker ps --filter "name=app" -q)
-          docker exec -w /var/www/html $APP_CONTAINER_ID composer install
+          docker exec -w /var/www/html ${APP_CONTAINER_ID} composer install
       - name: Install Playwright dependencies
         run: |
-          APP_CONTAINER_ID=$(docker ps --filter "name=app" -q)
-          docker exec -w /var/www/html $APP_CONTAINER_ID npx playwright install
-          docker exec -w /var/www/html $APP_CONTAINER_ID npx playwright install-deps  
+          docker exec -w /var/www/html ${APP_CONTAINER_ID} npx playwright install
+          docker exec -w /var/www/html ${APP_CONTAINER_ID} npx playwright install-deps  
       - name: Run Static Test
         run: |
-          APP_CONTAINER_ID=$(docker ps --filter "name=app" -q)
-          docker exec -w /var/www/html $APP_CONTAINER_ID vendor/bin/phpstan analyse
+          docker exec -w /var/www/html ${APP_CONTAINER_ID} vendor/bin/phpstan analyse
       - name: Run Unit Test
         run: |
-          APP_CONTAINER_ID=$(docker ps --filter "name=app" -q)
-          docker exec -w /var/www/html $APP_CONTAINER_ID vendor/bin/phpunit
+          docker exec -w /var/www/html ${APP_CONTAINER_ID} vendor/bin/phpunit
       - name: Run E2E Test
         run: |
-          APP_CONTAINER_ID=$(docker ps --filter "name=app" -q)
-          docker exec -w /var/www/html $APP_CONTAINER_ID npx playwright test
+          docker exec -w /var/www/html ${APP_CONTAINER_ID} npx playwright test
